@@ -1,7 +1,9 @@
 gulp-cordova-app-loader-manifest
 ================================
 
-Gulp plugin to create cordova-app-loader manifests
+Gulp plugin to create cordova-app-loader manifests.
+This plugin is fork from [alexbeyn/gulp-cordova-app-loader-manifest](https://github.com/alexbeyn/gulp-cordova-app-loader-manifest), so all kudos go for him.
+There are minor changes in the manifest generation (mostly to fit the structure of my in my current projects easier).
 
 ## Usage
 
@@ -19,13 +21,28 @@ gulp.task('manifest', function() {
 
 #### load
 ```javascript
-options.load = ['**'];
+options.load = [
+  'lib/your-app.js',
+  'css/your-css.css'
+];
 ```
-A glob pattern, or array of glob patterns, against which files will be tested before being added to manifest.load.
-`minimatch` is used for testing.
 
 #### root
 ```javascript
 options.root = './';
 ```
 Specifies the manifest.root option.
+
+#### prefixSplit
+```javascript
+options.prefixSplit = '/'
+```
+Specifies prefix to split the _options.load_ filenames (default value is '/').
+
+This means `options.prefixSplit = 'www/` for the `['www/lib/app.js', 'www/css/style.css']` will produce the following output:
+```javasript
+manifest.load = [
+  'lib/app.js',
+  'css/style.css'
+]
+```

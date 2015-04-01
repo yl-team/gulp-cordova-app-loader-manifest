@@ -9,7 +9,7 @@ var PLUGIN_NAME = 'gulp-cordova-app-loader-manifest';
 var calManifest = function calManifest(options) {
     options = options || {};
 
-    options.prefixSplit = options.prefixSplit || '/'
+    options.prefixSplit = options.prefixSplit || '/';
 
     if (!options.load) {
         options.load = ['**'];
@@ -44,28 +44,12 @@ var calManifest = function calManifest(options) {
         };
 
         var i, pattern;
-        var doLoad = false;
         for (i = 0; i < options.load.length; i++) {
             pattern = options.load[i];
-            if (pattern.charAt(0) === '!') {
-                if (minimatch(filename, pattern, {flipNegate: true})) {
-                    doLoad = false;
-                    break;
-                }
-            } else {
-                if (pattern.indexOf(filename) > -1) {
-                    doLoad = true;
-                    manifest.load.push(pattern.split(options.prefixSplit).pop())
-                }
+            if (pattern.indexOf(filename) > -1) {
+                manifest.load.push(pattern.split(options.prefixSplit).pop())
             }
         }
-        if (doLoad) {
-            // var split_path = pattern.split(options.prefixSplit)
-            // var last_found = split_path[split_path.length]
-            // manifest.load.push(pattern.split(options.prefixSplit).pop())
-
-        }
-
         done();
     };
 
