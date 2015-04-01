@@ -2,13 +2,14 @@
 
 var Stream = require('stream');
 var gutil = require('gulp-util');
-var minimatch = require('minimatch');
 
 var PLUGIN_NAME = 'gulp-cordova-app-loader-manifest';
 
 
 var calManifest = function calManifest(options) {
     options = options || {};
+
+    options.prefixSplit = options.prefixSplit || '/'
 
     if (!options.load) {
         options.load = ['**'];
@@ -52,13 +53,17 @@ var calManifest = function calManifest(options) {
                     break;
                 }
             } else {
-                if (minimatch(filename, pattern)) {
+                if (pattern.indexOf(filename) > -1) {
                     doLoad = true;
+                    manifest.load.push(pattern.split(options.prefixSplit).pop())
                 }
             }
         }
         if (doLoad) {
-            manifest.load.push(filename);
+            // var split_path = pattern.split(options.prefixSplit)
+            // var last_found = split_path[split_path.length]
+            // manifest.load.push(pattern.split(options.prefixSplit).pop())
+
         }
 
         done();
