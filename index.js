@@ -2,6 +2,7 @@
 
 var Stream = require('stream');
 var gutil = require('gulp-util');
+var path = require('path')
 
 var PLUGIN_NAME = 'gulp-cordova-app-loader-manifest';
 
@@ -20,7 +21,6 @@ var calManifest = function calManifest(options) {
     var manifest = {
         files: {},
         load: [],
-        root: options.root || './'
     };
 
     var stream = new Stream.Transform({objectMode: true});
@@ -36,24 +36,50 @@ var calManifest = function calManifest(options) {
         }
 
         var hasher = require('crypto').createHash('sha256');
-        var filename = encodeURI(file.relative);
+
+        var fileRelative = path.relative(options.root,file.path);
+        var filename = encodeURI(fileRelative);
         var key = filename.replace(/\//g, '_');
         manifest.files[key] = {
             filename: filename,
             version: hasher.update(file.contents).digest('hex')
         };
 
-        var i, pattern;
-        for (i = 0; i < options.load.length; i++) {
-            pattern = options.load[i];
-            if (pattern.indexOf(filename) > -1) {
-                manifest.load.push(pattern.split(options.prefixSplit).pop())
-            }
-        }
         done();
     };
 
     stream._flush = function (done) {
+
+        manifest.hash = new Date().getTime();
+
+        var loads = [];
+
+        var loaded = [];
+        for(var i in manifest.files){
+            var file = manifest.files[i].filename;
+
+            for(var j in options.load){
+                var glob = options.load[j];
+                if(loaded.indexOf(file) > -1){
+                    continue;
+                }
+                if(file.indexOf(glob) == 0){
+                    if(!loads[j]){
+                        loads[j] = [];
+                    }
+                    loaded.push(file);
+                    loads[j].push(file);
+                }
+            }
+        }
+
+        for(var k in loads){
+            manifest.load = manifest.load.concat(loads[k]);
+        }
+
+
+
+
         var file = new gutil.File({
             path: 'manifest.json',
             contents: new Buffer(JSON.stringify(manifest, null, 4))
