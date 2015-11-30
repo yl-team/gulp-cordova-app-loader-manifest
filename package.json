@@ -22,6 +22,7 @@
     "lodash": "^2.4.1"
   },
   "dependencies": {
-    "gulp-util": "^3.0.1"
+    "gulp-util": "^3.0.1",
+    "slash": "^1.0.0"
   }
 }
